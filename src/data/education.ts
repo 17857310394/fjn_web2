@@ -27,39 +27,19 @@ export const EDUCATION_DATA: Record<Language, EducationPageContent> = {
       {
         id: '1',
         year: '20XX - Present',
-        title: 'Degree / Major',
-        institution: 'Your University',
-        description: 'Brief description of your studies.',
+        title: '学位 / 专业',
+        institution: '你的大学名称',
+        description: '关于你学习内容的简短描述。',
         type: 'education'
       }
     ],
     honors: {
-      scholarships: ["Example Scholarship"],
-      titles: ["Example Title"],
+      scholarships: ["示例奖学金"],
+      titles: ["示例荣誉称号"],
       competitions: [
         {
-          level: "National",
-          awards: ["1st Prize | Example Competition"]
-        }
-      ]
-    }
-      ]
-    },
-        {
-          level: "省级",
-          awards: [
-            "中南赛区一、二、三等奖 | 计算机设计大赛",
-            "湖北赛区一等奖 | 大学生广告艺术大赛",
-            "湖北赛区二、三等奖 | 高校数字艺术设计大赛"
-          ]
-        },
-        {
-          level: "其他",
-          awards: [
-            "市级优秀奖 | 武汉市融媒体大赛",
-            "校级一等奖 | 华中师范大学科普短视频大赛",
-            "校级一等奖 | 华中师范大学“一幕光影”大赛"
-          ]
+          level: "国家级",
+          awards: ["一等奖 | 示例竞赛名称"]
         }
       ]
     }
@@ -90,26 +70,6 @@ export const EDUCATION_DATA: Record<Language, EducationPageContent> = {
         {
           level: "National",
           awards: ["1st Prize | Example Competition"]
-        }
-      ]
-    }
-      ]
-    },
-        {
-          level: "Provincial Level",
-          awards: [
-            "1st/2nd/3rd Prizes (Central South Region) | Computing Competition",
-            "1st Prize (Hubei) | Advertising Art Design Competition",
-            "2nd/3rd Prizes (Hubei) | Digital Art Design Competition"
-          ]
-        },
-        {
-          level: "Others",
-          awards: [
-            "City Excellence Award | Wuhan Convergence Media Competition",
-            "1st Prize | CCNU Popular Science Short Video Competition",
-            "1st Prize | CCNU 'One Scene Light & Shadow' Competition"
-          ]
         }
       ]
     }
