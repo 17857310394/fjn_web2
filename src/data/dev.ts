@@ -1,10 +1,10 @@
-import { Project } from '../../types';
+import { Category, ProjectSource } from '../../types';
 
-export const DEV_DATA: Project[] = [
+export const DEV_DATA: ProjectSource[] = [
   {
     id: 'dev1',
     common: {
-      category: 'Development',
+      category: Category.DEV,
       image: '', // Placeholder
       icon: 'message-circle',
       websiteUrl: 'https://wechat-msganalysis-krgkfhfdcxwmtwst4jc4bw.streamlit.app/',
@@ -17,20 +17,12 @@ export const DEV_DATA: Project[] = [
       role: '全栈开发',
       tags: ['Python', 'Streamlit', '数据分析'],
       roleDetail: "独立完成后端数据处理逻辑与前端可视化界面开发。"
-    },
-    en: {
-      title: 'WeChat Msg Analysis',
-      subtitle: 'Python / Streamlit',
-      description: 'Comprehensive analysis of JSON chat records, including time slots, content, and interaction patterns.',
-      role: 'Full Stack Developer',
-      tags: ['Python', 'Streamlit', 'Data Analysis'],
-      roleDetail: "Independently completed backend data processing logic and frontend visualization interface development."
     }
   },
   {
     id: 'dev2',
     common: {
-      category: 'Development',
+      category: Category.DEV,
       image: '', // Placeholder
       icon: 'id-card',
       websiteUrl: 'https://lun3cy.github.io/LUNA-Badge/',
@@ -43,20 +35,12 @@ export const DEV_DATA: Project[] = [
       role: 'vibe builder',
       tags: ['React', 'Tailwind CSS'],
       roleDetail: "You`re absolutely RIGHT!"
-    },
-    en: {
-      title: 'LUNA-Badge Generator',
-      subtitle: 'React / Tailwind',
-      description: 'A designer badge generator application with custom styles.',
-      role: 'vibe builder',
-      tags: ['React', 'Tailwind CSS'],
-      roleDetail: "You`re absolutely RIGHT!"
     }
   },
   {
     id: 'dev3',
     common: {
-      category: 'Development',
+      category: Category.DEV,
       image: '', // Placeholder
       icon: 'file-text',
       websiteUrl: 'https://lun3cy.github.io/Md2Design/',
@@ -69,20 +53,12 @@ export const DEV_DATA: Project[] = [
       role: 'vibe builder',
       tags: ['React 19', 'Tailwind v4', 'Framer Motion', 'Zustand', '工具'],
       roleDetail: "基于 Gemini 3 Pro 与 Trae IDE 开发。"
-    },
-    en: {
-      title: 'Md2Design',
-      subtitle: 'React 19 / Tailwind v4',
-      description: 'Quickly turn plain Markdown into beautifully styled cards for social media promotion. Supports auto pagination, floating layers, custom fonts, and one-click export.',
-      role: 'vibe builder',
-      tags: ['React 19', 'Tailwind v4', 'Framer Motion', 'Zustand', 'Tool'],
-      roleDetail: "Developed with Gemini 3 Pro & Trae IDE."
     }
   },
   {
     id: 'dev4',
     common: {
-      category: 'Development',
+      category: Category.DEV,
       image: '', // Placeholder
       icon: 'film',
       websiteUrl: 'https://lun3cy.github.io/CineViz/',
@@ -95,14 +71,6 @@ export const DEV_DATA: Project[] = [
       role: 'vibe builder',
       tags: ['React', 'Tailwind CSS', 'TypeScript'],
       roleDetail: "请理解我的意思，再生成一次，不要修改前面的代码"
-    },
-    en: {
-      title: 'CineViz',
-      subtitle: 'React / Tailwind',
-      description: 'A video rhythm and visual analysis tool based on movie theory.',
-      role: 'vibe builder',
-      tags: ['React', 'Tailwind CSS', 'TypeScript'],
-      roleDetail: "Please understand my meaning, and generate it again. Do not modify the code before."
     }
   }
 ];

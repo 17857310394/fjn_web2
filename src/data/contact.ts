@@ -38,22 +38,5 @@ export const CONTACT_DATA: Record<Language, ContactContent> = {
     },
     githubLabel: "GitHub",
     footerDesign: "Powered by Gemini 3 Pro"
-  },
-  en: {
-    baseLabel: "BASE",
-    locationValue: "Your City, Country",
-    contactLabel: "Get in touch",
-    emailMeLabel: "Email Me",
-    email: "your.email@example.com",
-    hello: "Hello ;-)",
-    intro: "Welcome to discuss & cooperate.",
-    socials: {
-      wechat: "YourWeChatID",
-      xiaohongshu: "YourID",
-      bilibili: "YourID",
-      px500: "YourID"
-    },
-    githubLabel: "GitHub",
-    footerDesign: "Powered by Gemini 3 Pro"
   }
 };

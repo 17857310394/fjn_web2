@@ -3,15 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { PROJECTS, CATEGORY_LABELS } from '../constants';
 import { Category, Language, Project } from '../types';
-import { PHOTOGRAPHY_GALLERY } from '../src/data/photography';
 import { ArrowUpRight, X, Terminal, MessageCircle, IdCard, Github, ExternalLink, ChevronLeft, ChevronRight, FileText, Film } from 'lucide-react';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface PortfolioSectionProps {
   language: Language;
   externalFilter?: string; // Controlled by parent if needed
 }
 
-const GalleryImage = ({ src, alt, onClick }: { src: string, alt: string, onClick: (e: React.MouseEvent) => void }) => {
+interface GalleryImageProps {
+  src: string;
+  alt: string;
+  onClick: (e: React.MouseEvent) => void;
+}
+
+const GalleryImage: React.FC<GalleryImageProps> = ({ src, alt, onClick }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -59,9 +65,8 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
   // Get Categories in preferred order
   const currentProjects = PROJECTS[language];
   const preferredOrder = [
-    Category.PHOTO,
-    Category.VIDEO,
-    Category.DESIGN,
+    Category.GAME,
+    Category.ARTICLE,
     Category.DEV
   ];
   
@@ -94,7 +99,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
 
   // Derived Gallery for Lightbox
   const currentGallery = displayProject 
-    ? (displayProject.gallery || PHOTOGRAPHY_GALLERY[displayProject.id] || []) 
+    ? (displayProject.gallery || []) 
     : [];
 
   // Lightbox Navigation
@@ -233,7 +238,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                                     <span className="text-lg md:text-xl font-normal opacity-70">{project.subtitle}</span>
                                 </h4>
                                 <p className="text-xs font-mono text-gray-400 mt-4 uppercase tracking-widest border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1 inline-block">
-                                    {language === 'zh' ? '预览部署中...' : 'Preview Deploying...'}
+                                    预览部署中...
                                 </p>
                             </div>
                         </div>
@@ -260,7 +265,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                   </div>
 
                   {/* Tags */}
-                  {project.category !== Category.PHOTO && (
+                  {(
                     <div className="mt-4 flex flex-wrap gap-2 md:gap-3">
                        {project.tags.map(tag => (
                          <span key={tag} className="text-[10px] md:text-xs font-bold font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wider border border-gray-200 dark:border-gray-800 px-2 py-1 rounded-md">#{tag}</span>
@@ -357,41 +362,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                    <X size={24} className="text-black dark:text-white" />
                  </button>
 
-                 {displayProject.category === Category.PHOTO ? (
-                    // SPECIAL PHOTO LAYOUT
-                    <div className="p-6 md:p-12 flex flex-col items-center min-h-full">
-                        <h2 className="text-3xl md:text-5xl font-black text-black dark:text-white mb-4 text-center">
-                            {displayProject.title}
-                        </h2>
-                        <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl text-center mb-12 font-medium">
-                            {displayProject.description}
-                        </p>
-                        
-                        {(() => {
-                            const gallery = displayProject.gallery || PHOTOGRAPHY_GALLERY[displayProject.id];
-                            return gallery && gallery.length > 0 ? (
-                                <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-                                    {gallery.map((item, idx) => (
-                                        <GalleryImage 
-                                            key={idx}
-                                            src={item}
-                                            alt={`${displayProject.title} ${idx + 1}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setLightboxIndex(idx);
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-64 w-full border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem]">
-                                    <p className="text-gray-400 font-mono">No images found in local folder.</p>
-                                </div>
-                            );
-                        })()}
-                    </div>
-                 ) : (
-                    // DEFAULT LAYOUT FOR OTHER CATEGORIES
+                 {(
                     <>
                      {/* Hero Media (Video, Bilibili, Figma or Image) */}
                      <div className={`
@@ -446,7 +417,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                                       <div className="text-center">
                                           <h2 className="text-4xl font-black text-black/20 dark:text-white/20 mb-2">{displayProject.title}</h2>
                                           <p className="text-xl font-bold text-black/20 dark:text-white/20 uppercase tracking-widest">
-                                              {language === 'zh' ? '预览部署中...' : 'Preview Deploying...'}
+                                              预览部署中...
                                           </p>
                                       </div>
                                   </div>
@@ -482,7 +453,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                          {displayProject.concept && (
                              <div className="space-y-8">
                                 <h3 className="text-2xl font-black uppercase tracking-wide text-black dark:text-white border-l-4 border-black dark:border-white pl-6">
-                                  {language === 'zh' ? '设计意图 / 创意陈述' : 'Concept / Statement'}
+                                  设计意图 / 创意陈述
                                 </h3>
                                 <p className="text-xl leading-relaxed text-gray-600 dark:text-gray-300">
                                    {displayProject.concept}
@@ -496,7 +467,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                             {displayProject.awards && displayProject.awards.length > 0 && (
                                 <div className="space-y-4">
                                   <h4 className="text-base font-bold uppercase text-gray-400 dark:text-gray-500 tracking-wider">
-                                    {language === 'zh' ? '获奖情况' : 'Awards & Recognition'}
+                                    获奖情况
                                   </h4>
                                   <ul className="space-y-3">
                                         {displayProject.awards.map((award, i) => {
@@ -517,7 +488,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                                 {/* Role */}
                                 <div className="space-y-4 flex-1 min-w-[200px]">
                                     <h4 className="text-base font-bold uppercase text-gray-400 dark:text-gray-500 tracking-wider">
-                                        {language === 'zh' ? '分工与职责' : 'Role & Responsibility'}
+                                        分工与职责
                                     </h4>
                                     <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                                         <span className="font-bold text-black dark:text-white block mb-1 text-lg">{displayProject.role}</span>
@@ -541,7 +512,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                                 {(displayProject.githubUrl || displayProject.websiteUrl) && (
                                     <div className="space-y-4 flex-1 min-w-[200px]">
                                         <h4 className="text-base font-bold uppercase text-gray-400 dark:text-gray-500 tracking-wider">
-                                            {language === 'zh' ? '相关链接' : 'Links'}
+                                            相关链接
                                         </h4>
                                         <div className="flex flex-wrap gap-4">
                                             {displayProject.githubUrl && (
@@ -566,6 +537,42 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                        </div>
 
                      </div>
+                     
+                     {displayProject.content ? (
+                       <div className="px-6 md:px-12 pb-10 md:pb-14">
+                         <div className="w-full h-[1px] bg-gray-200 dark:bg-gray-700 mb-8 md:mb-12"></div>
+                         <div className="mb-6">
+                           <h3 className="text-2xl font-black uppercase tracking-wide text-black dark:text-white border-l-4 border-black dark:border-white pl-6">
+                             正文
+                           </h3>
+                         </div>
+                         <MarkdownRenderer content={displayProject.content} />
+                       </div>
+                     ) : null}
+
+                     {currentGallery.length > 0 ? (
+                       <div className="px-6 md:px-12 pb-10 md:pb-14">
+                         <div className="w-full h-[1px] bg-gray-200 dark:bg-gray-700 mb-8 md:mb-12"></div>
+                         <div className="mb-6">
+                           <h3 className="text-2xl font-black uppercase tracking-wide text-black dark:text-white border-l-4 border-black dark:border-white pl-6">
+                             图集
+                           </h3>
+                         </div>
+                         <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+                           {currentGallery.map((item, idx) => (
+                             <GalleryImage
+                               key={idx}
+                               src={item}
+                               alt={`${displayProject.title} ${idx + 1}`}
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 setLightboxIndex(idx);
+                               }}
+                             />
+                           ))}
+                         </div>
+                       </div>
+                     ) : null}
                    </>
                  )}
                </>

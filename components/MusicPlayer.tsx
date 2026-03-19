@@ -295,20 +295,20 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
       {showPrompt && !isOpen && (
         <div className="pointer-events-auto bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-2xl p-4 animate-bounce-subtle max-w-[220px]">
           <p className="text-sm font-medium mb-3 text-zinc-800 dark:text-zinc-200">
-            {language === 'zh' ? '👋 来点氛围音乐？' : '👋 How about some ambient music?'}
+            👋 来点氛围音乐？
           </p>
           <div className="flex gap-2 justify-end">
             <button 
               onClick={() => handlePromptResponse(false)}
               className="px-3 py-1.5 text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
             >
-              {language === 'zh' ? '不了' : 'No thanks'}
+              不了
             </button>
             <button 
               onClick={() => handlePromptResponse(true)}
               className="px-3 py-1.5 text-xs bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity font-medium"
             >
-              {language === 'zh' ? '阔以' : 'Sure'}
+              阔以
             </button>
           </div>
         </div>
@@ -321,7 +321,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
             <button
               onClick={() => setIsOpen(true)}
               className={`absolute inset-0 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-700/50 rounded-full shadow-lg flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group z-20 ${isClosing ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
-              title={language === 'zh' ? '打开播放器' : 'Open Music Player'}
+              title={'打开播放器'}
             >
               <Music className={`w-5 h-5 ${isPlaying ? 'animate-spin-slow' : 'group-hover:animate-spin-slow'}`} />
             </button>
@@ -346,9 +346,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${showLoadingUI && isPlaying ? 'bg-amber-400 animate-pulse' : 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)] animate-pulse'}`}></span>
                   <span className={`text-[10px] font-bold text-white/90 uppercase tracking-widest drop-shadow-md ${showLoadingUI && isPlaying ? 'animate-pulse' : ''}`}>
-                    {showLoadingUI && isPlaying 
-                      ? (language === 'zh' ? '正在加载' : 'Loading...') 
-                      : (language === 'zh' ? '正在播放' : 'Now Playing')}
+                    {showLoadingUI && isPlaying ? '正在加载' : '正在播放'}
                   </span>
                 </div>
                 <button 
@@ -448,10 +446,10 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
                   <div className="backdrop-blur-md bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl p-3 flex items-center justify-between group transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-pointer">
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-white/90 mb-0.5 drop-shadow-md">
-                        {language === 'zh' ? '品味不错？' : 'Nice taste?'}
+                        品味不错？
                       </span>
                       <span className="text-[10px] text-white/70 font-medium group-hover:text-white/90 transition-colors">
-                        {language === 'zh' ? '我的歌单有更多好听的哦' : 'Check out my full playlist for more'}
+                        我的歌单有更多好听的哦
                       </span>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">

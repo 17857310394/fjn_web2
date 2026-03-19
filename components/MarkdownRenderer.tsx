@@ -1,0 +1,294 @@
+import React from 'react';
+
+type InlineNode = string | React.ReactElement;
+
+function parseInline(text: string, keyPrefix: string): InlineNode[] {
+  const nodes: InlineNode[] = [];
+
+  const parts = text.split(/(`[^`]+`)/g);
+  let keyIndex = 0;
+
+  for (const part of parts) {
+    if (!part) continue;
+
+    if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+      nodes.push(
+        <code
+          key={`${keyPrefix}-code-${keyIndex++}`}
+          className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-sm font-mono text-gray-800 dark:text-gray-200"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+      continue;
+    }
+
+    let rest = part;
+    while (rest.length > 0) {
+      const linkMatch = rest.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      if (!linkMatch || linkMatch.index === undefined) {
+        nodes.push(...parseEmphasis(rest, `${keyPrefix}-em-${keyIndex++}`));
+        break;
+      }
+
+      const before = rest.slice(0, linkMatch.index);
+      if (before) nodes.push(...parseEmphasis(before, `${keyPrefix}-em-${keyIndex++}`));
+
+      const label = linkMatch[1];
+      const href = linkMatch[2];
+      nodes.push(
+        <a
+          key={`${keyPrefix}-link-${keyIndex++}`}
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="font-bold underline decoration-2 underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        >
+          {label}
+        </a>
+      );
+
+      rest = rest.slice(linkMatch.index + linkMatch[0].length);
+    }
+  }
+
+  return nodes;
+}
+
+function parseEmphasis(text: string, keyPrefix: string): InlineNode[] {
+  const nodes: InlineNode[] = [];
+  let rest = text;
+  let keyIndex = 0;
+
+  while (rest.length > 0) {
+    const boldMatch = rest.match(/\*\*([^*]+)\*\*/);
+    const italicMatch = rest.match(/\*([^*]+)\*/);
+
+    const candidates: Array<{ kind: 'bold' | 'italic'; match: RegExpMatchArray }> = [];
+    if (boldMatch && boldMatch.index !== undefined) candidates.push({ kind: 'bold', match: boldMatch });
+    if (italicMatch && italicMatch.index !== undefined) candidates.push({ kind: 'italic', match: italicMatch });
+
+    if (candidates.length === 0) {
+      nodes.push(rest);
+      break;
+    }
+
+    candidates.sort((a, b) => (a.match.index ?? 0) - (b.match.index ?? 0));
+    const picked = candidates[0];
+    const idx = picked.match.index ?? 0;
+
+    const before = rest.slice(0, idx);
+    if (before) nodes.push(before);
+
+    const content = picked.match[1] ?? '';
+    if (picked.kind === 'bold') {
+      nodes.push(
+        <strong key={`${keyPrefix}-b-${keyIndex++}`} className="font-black">
+          {content}
+        </strong>
+      );
+    } else {
+      nodes.push(
+        <em key={`${keyPrefix}-i-${keyIndex++}`} className="italic">
+          {content}
+        </em>
+      );
+    }
+
+    rest = rest.slice(idx + picked.match[0].length);
+  }
+
+  return nodes;
+}
+
+function isHr(line: string): boolean {
+  const t = line.trim();
+  return t === '---' || t === '***' || t === '___';
+}
+
+function headingLevel(line: string): number | null {
+  const m = line.match(/^(#{1,6})\s+(.+)$/);
+  if (!m) return null;
+  return m[1].length;
+}
+
+function renderHeading(level: number, content: string, key: string) {
+  const base = 'font-black text-black dark:text-white leading-tight';
+  const cls =
+    level === 1 ? `text-3xl md:text-4xl ${base}` :
+    level === 2 ? `text-2xl md:text-3xl ${base}` :
+    level === 3 ? `text-xl md:text-2xl ${base}` :
+    level === 4 ? `text-lg md:text-xl ${base}` :
+    level === 5 ? `text-base md:text-lg ${base}` :
+    `text-sm md:text-base ${base}`;
+
+  const Tag = (`h${level}` as keyof JSX.IntrinsicElements);
+  return <Tag key={key} className={cls}>{parseInline(content, key)}</Tag>;
+}
+
+export interface MarkdownRendererProps {
+  content: string;
+}
+
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+  const lines = content.replace(/\r\n/g, '\n').split('\n');
+  const blocks: React.ReactNode[] = [];
+
+  let i = 0;
+  let keyIndex = 0;
+  const nextKey = (prefix: string) => `${prefix}-${keyIndex++}`;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      i += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith('```')) {
+      const language = trimmed.slice(3).trim();
+      const codeLines: string[] = [];
+      i += 1;
+      while (i < lines.length && !lines[i].trim().startsWith('```')) {
+        codeLines.push(lines[i]);
+        i += 1;
+      }
+      if (i < lines.length) i += 1;
+      blocks.push(
+        <pre
+          key={nextKey('code')}
+          className="w-full overflow-x-auto rounded-2xl bg-black text-white p-5 md:p-6 text-sm font-mono border border-black/10 dark:border-white/10"
+        >
+          {language ? (
+            <div className="text-xs font-bold uppercase tracking-widest text-white/60 mb-3">{language}</div>
+          ) : null}
+          <code>{codeLines.join('\n')}</code>
+        </pre>
+      );
+      continue;
+    }
+
+    if (isHr(trimmed)) {
+      blocks.push(<div key={nextKey('hr')} className="w-full h-px bg-gray-200 dark:bg-gray-700 my-6" />);
+      i += 1;
+      continue;
+    }
+
+    const level = headingLevel(trimmed);
+    if (level) {
+      const text = trimmed.replace(/^#{1,6}\s+/, '');
+      blocks.push(renderHeading(level, text, nextKey('h')));
+      i += 1;
+      continue;
+    }
+
+    const img = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (img) {
+      blocks.push(
+        <figure key={nextKey('img')} className="w-full">
+          <img
+            src={img[2]}
+            alt={img[1]}
+            referrerPolicy="no-referrer"
+            className="w-full rounded-2xl border border-gray-200 dark:border-gray-800"
+            loading="lazy"
+            decoding="async"
+          />
+          {img[1] ? (
+            <figcaption className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              {img[1]}
+            </figcaption>
+          ) : null}
+        </figure>
+      );
+      i += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith('> ')) {
+      const quoteLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith('> ')) {
+        quoteLines.push(lines[i].trim().slice(2));
+        i += 1;
+      }
+      blocks.push(
+        <blockquote
+          key={nextKey('quote')}
+          className="border-l-4 border-black dark:border-white pl-5 py-1 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-white/5 rounded-r-2xl"
+        >
+          <p className="text-base md:text-lg leading-relaxed font-medium">
+            {parseInline(quoteLines.join(' '), nextKey('quote-inline'))}
+          </p>
+        </blockquote>
+      );
+      continue;
+    }
+
+    const ul = trimmed.match(/^[-*]\s+(.+)$/);
+    const ol = trimmed.match(/^\d+\.\s+(.+)$/);
+    if (ul || ol) {
+      const isOrdered = Boolean(ol);
+      const items: string[] = [];
+      while (i < lines.length) {
+        const t = lines[i].trim();
+        const mUl = t.match(/^[-*]\s+(.+)$/);
+        const mOl = t.match(/^\d+\.\s+(.+)$/);
+        if (isOrdered) {
+          if (!mOl) break;
+          items.push(mOl[1]);
+        } else {
+          if (!mUl) break;
+          items.push(mUl[1]);
+        }
+        i += 1;
+      }
+      const ListTag = (isOrdered ? 'ol' : 'ul') as 'ol' | 'ul';
+      blocks.push(
+        <ListTag
+          key={nextKey('list')}
+          className={`${isOrdered ? 'list-decimal' : 'list-disc'} pl-6 space-y-2 text-gray-700 dark:text-gray-200`}
+        >
+          {items.map((item, idx) => (
+            <li key={`${nextKey('li')}-${idx}`} className="text-base md:text-lg leading-relaxed font-medium">
+              {parseInline(item, `${nextKey('li-inline')}-${idx}`)}
+            </li>
+          ))}
+        </ListTag>
+      );
+      continue;
+    }
+
+    const paraLines: string[] = [trimmed];
+    i += 1;
+    while (i < lines.length) {
+      const t = lines[i].trim();
+      if (!t) break;
+      if (t.startsWith('```')) break;
+      if (headingLevel(t)) break;
+      if (isHr(t)) break;
+      if (t.startsWith('> ')) break;
+      if (/^!\[([^\]]*)\]\(([^)]+)\)$/.test(t)) break;
+      if (/^[-*]\s+/.test(t)) break;
+      if (/^\d+\.\s+/.test(t)) break;
+      paraLines.push(t);
+      i += 1;
+    }
+    blocks.push(
+      <p
+        key={nextKey('p')}
+        className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-200 font-medium"
+      >
+        {parseInline(paraLines.join(' '), nextKey('p-inline'))}
+      </p>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col gap-5">
+      {blocks}
+    </div>
+  );
+};
+

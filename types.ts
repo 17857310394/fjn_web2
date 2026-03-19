@@ -1,30 +1,11 @@
 
-export type Language = 'zh' | 'en';
+export type Language = 'zh';
 
 export enum Category {
   ALL = 'All',
-  VIDEO = 'Videography',
-  DESIGN = 'Graphics & UI',
-  PHOTO = 'Photography',
-  DEV = 'Development',
-  ARTICLE = 'Article'
-}
-
-export enum ArticleCategory {
-  DIT = 'DiT', // 数媒与课程
-  LUNA = 'LUNA', // 影像相关
-  TALK = '瞎叨be叨', // 杂记
-  AFTER8 = 'After8', // 聊艺术
-  SERENITY = '山海疗养院' // 游记
-}
-
-export interface Article {
-  id: string;
-  title: string;
-  category: ArticleCategory;
-  link: string; // WeChat Official Account Link
-  coverImage?: string; // Optional, will fallback if not provided
-  date?: string;
+  GAME = 'Game',
+  ARTICLE = 'ARTICLE',
+  DEV = 'Development'
 }
 
 export interface Project {
@@ -45,16 +26,41 @@ export interface Project {
   concept?: string;
   roleDetail?: string;
   awards?: string[]; // Array of award strings
-  
-  // Special field for placeholder UI
-  bilingualTitle?: {
-    zh: string;
-    en: string;
-  };
 
   websiteUrl?: string; // Online preview URL
   githubUrl?: string; // GitHub repository URL
   icon?: string; // Icon name for Dev projects
+  content?: string;
+}
+
+export interface ProjectCommonFields {
+  category: Category;
+  image: string;
+  videoUrl?: string;
+  bilibiliId?: string;
+  figmaUrl?: string;
+  gallery?: string[];
+  externalLink?: string;
+  websiteUrl?: string;
+  githubUrl?: string;
+  icon?: string;
+}
+
+export interface ProjectLocalizedFields {
+  title: string;
+  subtitle: string;
+  description: string;
+  role: string;
+  tags: string[];
+  concept?: string;
+  roleDetail?: string;
+  awards?: string[];
+}
+
+export interface ProjectSource {
+  id: string;
+  common: ProjectCommonFields;
+  zh: ProjectLocalizedFields;
 }
 
 export interface Experience {

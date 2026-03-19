@@ -4,13 +4,9 @@ import Matter from 'matter-js';
 import { Sidebar } from './components/Sidebar';
 import { HeroSection } from './components/HeroSection';
 import { PortfolioSection } from './components/PortfolioSection';
-import { ArticleSection } from './components/ArticleSection';
-import { TimelineSection } from './components/TimelineSection';
 import { MusicPlayer } from './components/MusicPlayer';
 import { Mail, MapPin, RotateCcw, MessageSquare, Instagram, Youtube, FileText, Aperture, Github } from 'lucide-react';
-import { NAV_ITEMS } from './src/data/navigation';
 import { CONTACT_DATA } from './src/data/contact';
-import { ARTICLES_PAGE_DATA } from './src/data/articles';
 import { PORTFOLIO_PAGE_DATA } from './src/data/portfolioPage';
 import { Language, Category } from './types';
 
@@ -21,7 +17,7 @@ interface ExplodedElementData {
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [language, setLanguage] = useState<Language>('zh');
+  const language: Language = 'zh';
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
   const [portfolioCategory, setPortfolioCategory] = useState<string>('All');
@@ -78,10 +74,6 @@ function App() {
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
-
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
   };
 
   const handleHeroNavigation = (category: Category) => {
@@ -388,26 +380,6 @@ function App() {
              <PortfolioSection language={language} externalFilter={portfolioCategory} />
           </div>
         );
-      case 'articles':
-        return (
-          <div className="pt-20 w-full max-w-[96vw] mx-auto">
-             <div className="mb-24 flex flex-col items-center text-center">
-               <h1 className="text-[8vw] leading-none font-black mb-8 text-black dark:text-white transition-colors duration-300">
-                 {ARTICLES_PAGE_DATA[language].title}
-               </h1>
-               <p className="text-2xl text-gray-500 dark:text-gray-400 max-w-2xl font-medium transition-colors duration-300">
-                 {ARTICLES_PAGE_DATA[language].description}
-               </p>
-             </div>
-             <ArticleSection language={language} />
-          </div>
-        );
-      case 'about':
-        return (
-          <div className="pt-20 w-full max-w-[96vw] mx-auto">
-            <TimelineSection language={language} />
-          </div>
-        );
       case 'contact':
         return (
            <div className="pt-32 w-full max-w-5xl mx-auto text-center animate-fade-in px-4">
@@ -461,7 +433,7 @@ function App() {
                  >
                     <MessageSquare size={48} className="mx-auto mb-6 text-gray-400 group-hover:text-[#07C160] transition-colors duration-300" />
                     <h3 className="text-2xl font-bold mb-2 text-black dark:text-white transition-colors duration-300">
-                      {language === 'zh' ? '公众号' : 'WeChat'}
+                      公众号
                     </h3>
                     <p className="text-lg opacity-70 text-gray-500 dark:text-gray-400 transition-colors duration-300">
                       {content.socials?.wechat || 'Lun3cy'}
@@ -511,7 +483,7 @@ function App() {
                  >
                     <Instagram size={48} className="mx-auto mb-6 text-gray-400 group-hover:text-[#EC4048] transition-colors duration-300" />
                     <h3 className="text-2xl font-bold mb-2 text-black dark:text-white transition-colors duration-300">
-                      {language === 'zh' ? '小红书' : 'RED'}
+                      小红书
                     </h3>
                     <p className="text-lg opacity-70 text-gray-500 dark:text-gray-400 transition-colors duration-300">
                       {content.socials?.xiaohongshu || 'Lun3cy'}
@@ -675,8 +647,6 @@ function App() {
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={(tab) => startViewTransition(() => setActiveTab(tab))} 
-        language={language}
-        toggleLanguage={toggleLanguage}
         theme={theme}
         toggleTheme={toggleTheme}
         onTriggerGravity={triggerGravity}
@@ -703,7 +673,7 @@ function App() {
             className="pointer-events-auto bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-bold text-xl shadow-2xl animate-fade-in hover:scale-110 transition-transform flex items-center gap-3 cursor-pointer"
           >
             <RotateCcw size={24} />
-            {language === 'zh' ? '变回去' : 'Go Back'}
+            变回去
           </button>
         </div>
       )}

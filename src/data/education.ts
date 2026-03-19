@@ -43,35 +43,5 @@ export const EDUCATION_DATA: Record<Language, EducationPageContent> = {
         }
       ]
     }
-  },
-  en: {
-    title: "Education",
-    about: "A brief introduction about your educational background and passions.",
-    openToWork: "Learning by Doing + Seeking Internship",
-    viewHonorsLabel: "View Honors & Awards",
-    honorsTitle: "Honors & Awards",
-    competitionsTitle: "Competition Awards",
-    scholarshipsLabel: "Scholarships",
-    titlesLabel: "Honorary Titles",
-    experiences: [
-      {
-        id: '1',
-        year: '20XX - Present',
-        title: 'Degree / Major',
-        institution: 'Your University',
-        description: 'Brief description of your studies.',
-        type: 'education'
-      }
-    ],
-    honors: {
-      scholarships: ["Example Scholarship"],
-      titles: ["Example Title"],
-      competitions: [
-        {
-          level: "National",
-          awards: ["1st Prize | Example Competition"]
-        }
-      ]
-    }
   }
 };

@@ -1,14 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { NAV_ITEMS } from '../src/data/navigation';
-import { Language } from '../types';
-import { Moon, Sun, Globe, Bomb } from 'lucide-react';
+import { Moon, Sun, Bomb } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  language: Language;
-  toggleLanguage: () => void;
   theme: 'light' | 'dark';
   toggleTheme: () => void;
   onTriggerGravity: () => void;
@@ -17,8 +14,6 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ 
   activeTab, 
   setActiveTab,
-  language,
-  toggleLanguage,
   theme,
   toggleTheme,
   onTriggerGravity
@@ -33,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const items = NAV_ITEMS[language];
+  const items = NAV_ITEMS.zh;
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isScrolled ? 'pt-4 md:pt-6' : 'pt-4 md:pt-6'}`}>
@@ -82,18 +77,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Divider */}
           <div className="w-[1px] h-6 md:h-8 bg-gray-200 dark:bg-gray-700 shrink-0 mx-2"></div>
 
-          {/* Controls: Language & Theme & Gravity */}
+          {/* Controls: Theme & Gravity */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
-             {/* Language Toggle */}
-             <button
-               onClick={toggleLanguage}
-               className="p-1 md:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-black dark:text-white flex items-center gap-1"
-               title="Switch Language"
-             >
-               <Globe size={20} className="md:w-6 md:h-6" />
-               <span className="text-base md:text-lg font-bold">{language === 'zh' ? 'EN' : '中'}</span>
-             </button>
-
              {/* Theme Toggle */}
              <button 
                onClick={toggleTheme}

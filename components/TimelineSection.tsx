@@ -52,7 +52,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ language }) =>
     }
   }, [isModalOpen]);
 
-  const decryptPayload = () => {};
+  const decryptPayload = (_payload: string) => {};
 
   const handleUnlockSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,13 +125,10 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ language }) =>
                 </span>
              </div>
              <h2 className="text-2xl md:text-3xl font-black text-black dark:text-white mb-4">
-               {language === 'zh' ? '一个小问题' : 'Just a Question'}
+               一个小问题
              </h2>
              <p className="text-xl font-medium text-gray-500 dark:text-gray-400">
-               {isSuccess 
-                  ? (language === 'zh' ? '回答正确，欢迎！' : 'Access Granted!') 
-                  : (language === 'zh' ? '名字最后一个字是？' : 'Last character of name?')
-               }
+               {isSuccess ? '回答正确，欢迎！' : '名字最后一个字是？'}
              </p>
            </div>
 
@@ -151,7 +148,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ language }) =>
                  rounded-2xl px-6 py-4 text-center text-2xl font-black outline-none transition-all
                  placeholder-gray-300 dark:placeholder-gray-700
                `}
-               placeholder={language === 'zh' ? '请输入答案' : 'Answer...'}
+              placeholder={'请输入答案'}
                autoFocus
              />
              <button 
@@ -164,16 +161,13 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ language }) =>
                     : 'bg-black dark:bg-white text-white dark:text-black hover:scale-[1.02] active:scale-[0.98]'}
                `}
              >
-               {isSuccess 
-                  ? (language === 'zh' ? '验证通过' : 'SUCCESS') 
-                  : (language === 'zh' ? '解锁' : 'UNLOCK')
-               }
+               {isSuccess ? '验证通过' : '解锁'}
              </button>
            </form>
            
            {isError && (
              <p className="absolute bottom-4 left-0 w-full text-red-500 text-sm font-bold animate-bounce">
-               {language === 'zh' ? '答案错误' : 'Incorrect Answer'}
+               答案错误
              </p>
            )}
            <p className="mt-6 text-sm font-bold text-gray-400 animate-pulse">可以在联系页面点击公众号联系我 ;-)</p>
