@@ -15,7 +15,7 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onCategorySelect, language }) => {
   const content = HOME_DATA[language];
   const contactContent = CONTACT_DATA[language];
-  const tooltipText = contactContent.tooltip || '还是想念武汉，但感觉之后可能也留在广深';
+  const tooltipText = contactContent.tooltip || '好好学习';
   const heroItems = content.heroItems || [];
   const [showToast, setShowToast] = useState(false);
   const [showLocationTooltip, setShowLocationTooltip] = useState(false);
@@ -63,18 +63,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onCategory
                 </div>
               ))}
             </div>
-          
-          {/* Increased max-width to 4xl to prevent unwanted wrapping */}
-          <div className="text-xl md:text-3xl text-gray-600 dark:text-gray-300 font-medium leading-relaxed max-w-4xl transition-colors duration-300">
-             {content.intro.split('|').map((line, i) => (
-               <React.Fragment key={i}>
-                 {line}
-                 <br className="hidden md:block" />
-                 {/* Mobile simple space */}
-                 <span className="md:hidden"> </span> 
-               </React.Fragment>
-             ))}
-          </div>
         </div>
 
         {/* RIGHT: Structured List (Cleaned Up) */}
@@ -111,6 +99,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onCategory
                     {contactContent.contactLabel}
                  </h3>
                </div>
+               
+               {/* Download Mindmap - Blue Text */}
+               <div onClick={() => window.open(contactContent.mindmapLink, '_blank')} className="cursor-pointer group flex items-center gap-3">
+                 <span className="text-2xl lg:text-3xl text-[#3B82F6] transition-transform duration-300 group-hover:translate-x-1">→</span>
+                 <h3 className="text-2xl lg:text-3xl font-bold mb-0 text-[#3B82F6] transition-colors duration-300 group-hover:opacity-80">
+                    下载个人简历
+                 </h3>
+               </div>
             </div>
           </div>
 
@@ -118,12 +114,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onCategory
       </section>
 
 
-      {/* Selected Works Preview */}
-      <div className="w-full h-[2px] bg-gray-100 dark:bg-gray-800 mb-6 lg:mb-8 transition-colors duration-300"></div>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 lg:mb-10 gap-4">
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-black dark:text-white transition-colors duration-300">{content.selectedWorks}</h2>
-        <span className="text-base lg:text-lg font-mono text-gray-500 dark:text-gray-400 font-bold tracking-widest transition-colors duration-300">{content.years}</span>
-      </div>
+
 
       {/* Floating Toast for Cooking */}
       {showToast && createPortal(

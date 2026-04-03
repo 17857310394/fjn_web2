@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 120);
+      setIsScrolled(window.scrollY > 80);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <h1 className={`font-black tracking-tighter uppercase transition-all duration-500 ease-in-out text-black dark:text-white leading-none
             ${isScrolled ? 'text-xl md:text-3xl' : 'text-[clamp(1.25rem,3vw,3rem)]'}
           `}>
-            LUN3CY <span className="hidden sm:inline">FAN</span>
+            FJN <span className="hidden sm:inline">LOO</span>
           </h1>
         </div>
 

@@ -1,16 +1,14 @@
 import { Language } from '../../types';
 
 export interface SocialLinks {
-  wechat: string;
-  xiaohongshu: string;
   bilibili: string;
-  px500: string;
 }
 
 export interface ContactContent {
   baseLabel: string;
   locationValue: string;
   contactLabel: string;
+  mindmapLink: string;
   emailMeLabel: string;
   email: string;
   hello: string;
@@ -18,25 +16,21 @@ export interface ContactContent {
   socials: SocialLinks;
   tooltip?: string;
   githubLabel: string;
-  footerDesign: string;
 }
 
 export const CONTACT_DATA: Record<Language, ContactContent> = {
   zh: {
     baseLabel: "BASE",
-    locationValue: "Your City, Country",
+    locationValue: "浙江-杭州",
     contactLabel: "取得联系",
     emailMeLabel: "邮箱",
-    email: "your.email@example.com",
+    mindmapLink: "/files/mindmap.pdf",
+    email: "840224026@qq.com",
     hello: "你好 ;-)",
     intro: "欢迎探讨与合作。",
     socials: {
-      wechat: "YourWeChatID",
-      xiaohongshu: "YourID",
-      bilibili: "YourID",
-      px500: "YourID"
+      bilibili: "Da大"
     },
     githubLabel: "GitHub",
-    footerDesign: "Powered by Gemini 3 Pro"
   }
 };

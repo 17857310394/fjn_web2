@@ -1,11 +1,12 @@
 ---
 id: sample-md-project
 common:
-  category: Game
+  category: Article
   image: https://www.figma.com/file/cRFVFLypB290MP6ImMgiPd/thumbnail?ver=thumbnails/86fca228-9e5a-4b50-bc1e-8bb31f33edb9'
 #   websiteUrl: https://lun3cy.github.io/LUNA-Badge/
   githubUrl: https://github.com/LuN3cy/WeChat-MsgAnalysis
-zh:
+  # videoUrl: /videos/video_0.mp4
+zh: 
   title: 通过 Markdown 配置的示例项目
   subtitle: 示例副标题
   description: 使用 md 前言区（frontmatter）来配置项目的元数据与文案。
@@ -54,9 +55,9 @@ console.log('Hello Markdown');
 
 ## 5. 图片
 
-![占位图（用于测试图片渲染）](https://via.placeholder.com/1200x600?text=Markdown+Image)
+![占位图（用于测试图片渲染）](https://www.figma.com/file/cRFVFLypB290MP6ImMgiPd/thumbnail?ver=thumbnails/86fca228-9e5a-4b50-bc1e-8bb31f33edb9)
 
 ## 6. 最后
 
 如果你希望支持表格、任务列表、脚注、嵌套列表、代码高亮主题等，也可以继续扩展渲染能力。
-
+[下载思维导图 PDF](/files/mindmap.png)

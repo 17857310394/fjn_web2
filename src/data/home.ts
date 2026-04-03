@@ -8,9 +8,6 @@ export interface HeroItem {
 
 export interface HomeContent {
   heroItems: HeroItem[];
-  intro: string;
-  selectedWorks: string;
-  years: string;
 }
 
 export const HOME_DATA: Record<Language, HomeContent> = {
@@ -20,8 +17,5 @@ export const HOME_DATA: Record<Language, HomeContent> = {
       { text: "策划案", annotation: "", category: Category.ARTICLE },
       { text: "应用开发", annotation: "", category: Category.DEV },
     ],
-    intro: "Your personal catchphrase or introduction goes here.",
-    selectedWorks: "精选作品",
-    years: "[ 20XX — 20XX ]"
   }
 };

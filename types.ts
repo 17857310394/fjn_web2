@@ -4,7 +4,7 @@ export type Language = 'zh';
 export enum Category {
   ALL = 'All',
   GAME = 'Game',
-  ARTICLE = 'ARTICLE',
+  ARTICLE = 'Article',
   DEV = 'Development'
 }
 
