@@ -152,7 +152,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
     <div className="w-full max-w-[96vw] mx-auto pb-20">
       
       {/* Brutalist Filter Bar - Sticky */}
-      <div className="flex flex-wrap gap-4 md:gap-8 mb-12 md:mb-16 border-b-2 border-black dark:border-white pb-4 md:pb-8 sticky top-20 md:top-24 bg-white/95 dark:bg-black/95 backdrop-blur-sm z-30 pt-4 transition-colors duration-300 overflow-x-auto no-scrollbar">
+      <div className="flex flex-wrap gap-4 md:gap-8 mb-12 md:mb-16 border-b-2 border-black/20 dark:border-white/20 pb-4 md:pb-8 sticky top-20 md:top-24 bg-transparent z-30 pt-4 transition-colors duration-300 overflow-x-auto no-scrollbar">
         {categories.map(cat => (
           <button
             key={cat}
@@ -178,7 +178,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
         {filteredProjects.map((project) => (
           <div 
             key={project.id} 
-            className={`group cursor-pointer flex flex-col h-full transform-gpu ${project.category === Category.DEV ? 'bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300' : ''}`}
+            className={`group cursor-pointer flex flex-col h-full transform-gpu ${project.category === Category.DEV ? 'bg-white/70 dark:bg-black/70 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300' : ''}`}
             onClick={() => setSelectedProject(project)}
           >
             
@@ -209,9 +209,9 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                </div>
             ) : (
                // STANDARD CARD LAYOUT
-               <>
+               <div className="bg-white/70 dark:bg-black/70 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl p-6 transition-all duration-300 group-hover:shadow-xl hover:-translate-y-2">
                   {/* Image container */}
-                  <div className="w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800 mb-6 overflow-hidden rounded-2xl relative shadow-none border border-transparent transition-all duration-500 group-hover:shadow-2xl dark:group-hover:shadow-none dark:group-hover:border-white/20 transform-gpu">
+                  <div className="w-full aspect-[4/3] mb-6 overflow-hidden rounded-xl relative shadow-none transform-gpu">
                     {project.image && !project.image.includes('picsum') ? (
                         <img 
                           src={project.image} 
@@ -222,7 +222,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
                         />
                     ) : project.bilibiliId ? (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700 transition-colors duration-300">
+                        <div className="w-full h-full flex items-center justify-center bg-white/50 dark:bg-black/50 group-hover:bg-white/70 dark:group-hover:bg-black/70 transition-colors duration-300">
                             <div className="flex flex-col items-center gap-4">
                                 <div className="w-16 h-16 rounded-full bg-[#FF6699] text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300">
                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 ml-1"><path d="M8 5v14l11-7z"/></svg>
@@ -231,7 +231,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                             </div>
                         </div>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 p-8 text-center">
+                        <div className="w-full h-full flex items-center justify-center bg-white/50 dark:bg-black/50 p-8 text-center">
                             <div>
                                 <h4 className={`${filter === 'All' ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'} font-black text-gray-400 dark:text-gray-600 mb-2 leading-tight`}>
                                     {project.title}<br/>
@@ -244,13 +244,13 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                         </div>
                     )}
                     
-                    <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-white dark:bg-black dark:text-white px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wider rounded-lg shadow-sm border border-transparent dark:border-white/10">
+                    <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-white/80 dark:bg-black/80 backdrop-blur-sm dark:text-white px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wider rounded-lg shadow-sm border border-transparent dark:border-white/10">
                       {CATEGORY_LABELS[language][project.category] || project.category}
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="flex justify-between items-start border-b-2 border-gray-100 dark:border-gray-800 pb-6 group-hover:border-black dark:group-hover:border-white transition-colors duration-300 mt-auto">
+                  <div className="flex justify-between items-start border-b-2 border-white/20 dark:border-white/10 pb-6 group-hover:border-black dark:group-hover:border-white transition-colors duration-300">
                     <div className="pr-4 md:pr-8">
                         <h3 className={`${filter === 'All' ? 'text-xl md:text-2xl' : 'text-2xl md:text-4xl'} font-black text-black dark:text-white mb-2 md:mb-3 group-hover:text-gray-800 dark:group-hover:text-gray-200 leading-tight transition-colors`}>
                           {project.title}
@@ -272,7 +272,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                        ))}
                     </div>
                   )}
-               </>
+               </div>
             )}
 
           </div>
