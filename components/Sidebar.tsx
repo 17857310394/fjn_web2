@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           flex items-center justify-between 
           transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]
           ${isScrolled 
-            ? 'w-[92vw] md:w-auto gap-2 md:gap-12 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-gray-200 dark:border-gray-800 rounded-2xl md:rounded-full px-4 md:px-10 py-3 md:py-4 shadow-pill dark:shadow-pill-dark' 
+            ? 'w-[92vw] md:w-auto gap-2 md:gap-12 bg-gray-200/20 dark:bg-gray-900/20 backdrop-blur-xl border border-gray-200 dark:border-gray-800 rounded-2xl md:rounded-full px-4 md:px-10 py-3 md:py-4 shadow-pill dark:shadow-pill-dark' 
             : 'w-[96vw] bg-transparent border-transparent shadow-none px-0 py-2 backdrop-blur-none'}
         `}
       >
@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`
                   text-base md:text-xl font-bold uppercase tracking-wide transition-colors duration-200 relative group whitespace-nowrap
-                  ${isActive ? 'text-black dark:text-white' : 'text-gray-400 hover:text-black dark:hover:text-white'}
+                  ${isActive ? 'text-black dark:text-white' : 'text-gray-500 hover:text-black dark:hover:text-white'}
                 `}
               >
                 {item.label}

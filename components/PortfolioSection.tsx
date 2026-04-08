@@ -161,7 +161,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
               text-lg md:text-2xl font-bold transition-colors duration-200 whitespace-nowrap
               ${filter === cat 
                 ? 'text-black dark:text-white underline decoration-4 underline-offset-8 decoration-black dark:decoration-white' 
-                : 'text-gray-400 dark:text-gray-600 hover:text-black dark:hover:text-white'}
+                : 'text-gray-700 dark:text-gray-700 hover:text-black dark:hover:text-white'}
             `}
           >
             {CATEGORY_LABELS[language][cat] || cat}

@@ -372,9 +372,6 @@ function App() {
                <h1 className="text-[8vw] leading-none font-black mb-8 text-black dark:text-white transition-colors duration-300">
                  {PORTFOLIO_PAGE_DATA[language].title}
                </h1>
-               <p className="text-2xl text-gray-500 dark:text-gray-400 max-w-2xl font-medium transition-colors duration-300">
-                 {PORTFOLIO_PAGE_DATA[language].description}
-               </p>
              </div>
              <PortfolioSection language={language} externalFilter={portfolioCategory} />
           </div>
@@ -391,12 +388,12 @@ function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  {/* Email */}
-                  <div className="block p-12 border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] group cursor-default hover:border-orange-500 transition-colors duration-300">
+                  <div className="block p-12 border-2 border-gray-200 dark:border-gray-800 rounded-[2rem] group cursor-default hover:border-orange-500 transition-colors duration-300 bg-gray-100/90 dark:bg-gray-900/70 backdrop-blur-xl">
                      <Mail size={48} className="mx-auto mb-6 text-gray-400 group-hover:text-orange-500 transition-colors duration-300" />
                      <h3 className="text-2xl font-bold mb-2 text-black dark:text-white transition-colors duration-300">
                        {content.emailMeLabel}
                      </h3>
-                     <p className="text-lg opacity-70 text-gray-500 dark:text-gray-400 transition-colors duration-300 select-text">
+                     <p className="text-lg opacity-70 text-gray-800 dark:text-gray-200 transition-colors duration-300 select-text">
                        {content.email}
                      </p>
                   </div>
@@ -405,7 +402,7 @@ function App() {
 
                  {/* Socials - Bilibili */}
                  <div 
-                    className="block p-12 border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] hover:border-[#00AEEC] transition-colors duration-300 group cursor-pointer relative"
+                    className="block p-12 border-2 border-gray-200 dark:border-gray-800 rounded-[2rem] hover:border-[#00AEEC] transition-colors duration-300 group cursor-pointer relative bg-gray-100/90 dark:bg-gray-900/70 backdrop-blur-xl"
                     onClick={() => window.open('https://space.bilibili.com/3894541', '_blank')}
                     onMouseEnter={(e) => {
                        const tooltip = document.getElementById('bili-tooltip');
@@ -436,7 +433,7 @@ function App() {
                     <h3 className="text-2xl font-bold mb-2 text-black dark:text-white transition-colors duration-300">
                       Bilibili
                     </h3>
-                    <p className="text-lg opacity-70 text-gray-500 dark:text-gray-400 transition-colors duration-300">
+                    <p className="text-lg opacity-70 text-gray-800 dark:text-gray-200 transition-colors duration-300">
                       {content.socials?.bilibili}
                     </p>
 
@@ -456,7 +453,7 @@ function App() {
 
                  {/* GitHub */}
                  <div 
-                    className="block p-12 border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] relative group cursor-pointer hover:border-black dark:hover:border-white transition-colors duration-300"
+                    className="block p-12 border-2 border-gray-200 dark:border-gray-800 rounded-[2rem] relative group cursor-pointer hover:border-black dark:hover:border-white transition-colors duration-300 bg-gray-100/90 dark:bg-gray-900/70 backdrop-blur-xl"
                     onClick={() => window.open('https://github.com/17857310394', '_blank')}
                  >
                     <Github size={48} className="mx-auto mb-6 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors duration-300" />
@@ -470,7 +467,7 @@ function App() {
                     <h3 className="text-2xl font-bold mb-2 text-black dark:text-white transition-colors duration-300">
                       {content.githubLabel}
                     </h3>
-                    <p className="text-lg opacity-70 text-gray-500 dark:text-gray-400 transition-colors duration-300">
+                    <p className="text-lg opacity-70 text-gray-800 dark:text-gray-200 transition-colors duration-300">
                       @17857310394
                     </p>
                  </div>
