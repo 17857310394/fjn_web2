@@ -91,7 +91,7 @@ zh:
 - **资源打包系统（MPQ）**：允许完整资产替换，实现个性化内容
 
 #### 系统定位
-[![alt text](../../../public/files/flow-1.png)](files/flow-1.png)
+[![alt text](files/flow-1.png)](files/flow-1.png)
 
 
 #### 资源循环定位
@@ -122,14 +122,14 @@ zh:
 | **多视图支持** | 2D地形编辑视图和3D游戏预览视图 | 便于用户在编辑过程中实时预览效果 |
 | **响应速度** | 在现代硬件上运行流畅，操作响应迅速 | 提供了良好的编辑体验，减少了等待时间 |
 
-![alt text](../../../public/files/image-0.png)
+![alt text](files/image-0.png)
 
 ## 二、核心功能拆解
 
 ### 1. 地形编辑系统
 
 #### 1.1 系统整体框架
-[![alt text](../../../public/files/flow-2.png)](files/flow-2.png)
+[![alt text](files/flow-2.png)](files/flow-2.png)
 
 #### 1.2 系统定位与战略价值
 
@@ -157,7 +157,7 @@ zh:
 2. **动态地形动画**：支持运行时修改顶点高度，实现地震、桥梁升降、地形破坏等效果
 3. **自动过渡算法**：根据顶点法线自动混合相邻纹理，减少美术手工绘制工作量
 
-![alt text](../../../public/files/level-3.png)
+![alt text](/files/level-3.png)
 
 **与同时代技术的对比**：
 
@@ -171,7 +171,7 @@ zh:
 ##### 1.3.2 层级（Cliff Level）系统
 
 层级系统是WE地形系统的**独特创新**。它并非简单的"高度值"，而是将地形划分为离散的**逻辑层级**，每个层级代表一个**可行走的平面**。
-![alt text](../../../public/files/level-2.png)
+![alt text](/files/level-2.png)
 
 **核心机制**：
 - **层级内平滑**：同一层级内的顶点可通过高度值实现平滑起伏
@@ -200,9 +200,9 @@ WE的纹理系统采用**基于相邻顶点法线的自动混合算法**：
 3. 在三角形内部根据顶点权重混合相邻纹理
 4. 特殊过渡纹理（如"草地到岩石的过渡"）自动应用于边界区域
 
-![alt text](../../../public/files/image-2.png)
+![alt text](/files/image-2.png)
 ----->
-![alt text](../../../public/files/image-1.png)
+![alt text](/files/image-1.png)
 
 **设计师价值**：
 - **降低美术门槛**：无需手动绘制纹理过渡，系统自动处理
@@ -239,7 +239,7 @@ WE的水体系统采用**遮罩（Mask）+ 深度图**的简化方案：
 - **岩石/建筑**：用于填补悬崖几何体的生硬边缘
 - **粒子特效**：用于水体、火焰等动态效果
 
-![alt text](../../../public/files/level-1.png)
+![alt text](/files/level-1.png)
 
 **关键洞察**：WE的地形系统与装饰物系统是**协同设计**的——地形负责**宏观空间结构**，装饰物负责**微观视觉细节和玩法补充**。
 
@@ -431,7 +431,7 @@ WE的层级机制是**"信息不对称"的空间化**。现代编辑器应：
 ### 3. 触发器编辑系统
 
 #### 3.1 系统整体框架
-[![alt text](../../../public/files/flow-3.png)](files/flow-3.png)
+[![alt text](/files/flow-3.png)](files/flow-3.png)
 
 #### 3.1 系统定位与战略价值
 
@@ -740,7 +740,7 @@ Reforged（2020）引入LUA作为替代脚本语言：
 ### 4. 物体编辑器
 
 #### 4.1 系统整体框架
-[![alt text](../../../public/files/flow-4.png)](files/flow-4.png)
+[![alt text](/files/flow-4.png)](files/flow-4.png)
 
 #### 4.2 系统定位与战略价值
 
