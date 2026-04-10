@@ -25,6 +25,40 @@ function parseInline(text: string, keyPrefix: string): InlineNode[] {
 
     let rest = part;
     while (rest.length > 0) {
+      // 尝试匹配图片链接格式 [![alt text](image-url)](link-url)
+      const fullLinkMatch = rest.match(/\[(!\[[^\]]*\]\([^)]+\))\]\(([^)]+)\)/);
+      if (fullLinkMatch && fullLinkMatch.index !== undefined) {
+        // 处理图片链接格式
+        const before = rest.slice(0, fullLinkMatch.index);
+        if (before) nodes.push(...parseEmphasis(before, `${keyPrefix}-em-${keyIndex++}`));
+        
+        const imgMatch = fullLinkMatch[1].match(/!\[([^\]]*)\]\(([^)]+)\)/);
+        if (imgMatch) {
+          const href = fullLinkMatch[2];
+          nodes.push(
+            <a
+              key={`${keyPrefix}-link-img-${keyIndex++}`}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="block"
+            >
+              <img
+                src={imgMatch[2]}
+                alt={imgMatch[1]}
+                referrerPolicy="no-referrer"
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 transition-opacity"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          );
+        }
+        rest = rest.slice(fullLinkMatch.index + fullLinkMatch[0].length);
+        continue;
+      }
+
+      // 尝试匹配普通链接格式 [text](link)
       const linkMatch = rest.match(/\[([^\]]+)\]\(([^)]+)\)/);
       if (!linkMatch || linkMatch.index === undefined) {
         nodes.push(...parseEmphasis(rest, `${keyPrefix}-em-${keyIndex++}`));
@@ -36,17 +70,43 @@ function parseInline(text: string, keyPrefix: string): InlineNode[] {
 
       const label = linkMatch[1];
       const href = linkMatch[2];
-      nodes.push(
-        <a
-          key={`${keyPrefix}-link-${keyIndex++}`}
-          href={href}
-          target="_blank"
-          rel="noreferrer"
-          className="font-bold underline decoration-2 underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-        >
-          {label}
-        </a>
-      );
+      
+      // 检查标签是否包含图片
+      const imgMatch = label.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imgMatch) {
+        // 处理图片作为链接的情况
+        nodes.push(
+          <a
+            key={`${keyPrefix}-link-img-${keyIndex++}`}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="block"
+          >
+            <img
+              src={imgMatch[2]}
+              alt={imgMatch[1]}
+              referrerPolicy="no-referrer"
+              className="w-full rounded-2xl border border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 transition-opacity"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        );
+      } else {
+        // 处理普通链接
+        nodes.push(
+          <a
+            key={`${keyPrefix}-link-${keyIndex++}`}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold underline decoration-2 underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            {parseInline(label, `${keyPrefix}-link-content-${keyIndex++}`)}
+          </a>
+        );
+      }
 
       rest = rest.slice(linkMatch.index + linkMatch[0].length);
     }
@@ -226,37 +286,86 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
       continue;
     }
 
-    const ul = trimmed.match(/^[-*]\s+(.+)$/);
-    const ol = trimmed.match(/^\d+\.\s+(.+)$/);
-    if (ul || ol) {
-      const isOrdered = Boolean(ol);
-      const items: string[] = [];
-      while (i < lines.length) {
-        const t = lines[i].trim();
-        const mUl = t.match(/^[-*]\s+(.+)$/);
-        const mOl = t.match(/^\d+\.\s+(.+)$/);
-        if (isOrdered) {
-          if (!mOl) break;
-          items.push(mOl[1]);
-        } else {
-          if (!mUl) break;
-          items.push(mUl[1]);
-        }
-        i += 1;
-      }
-      const ListTag = (isOrdered ? 'ol' : 'ul') as 'ol' | 'ul';
-      blocks.push(
-        <ListTag
-          key={nextKey('list')}
-          className={`${isOrdered ? 'list-decimal' : 'list-disc'} pl-6 space-y-2 text-gray-700 dark:text-gray-200`}
-        >
-          {items.map((item, idx) => (
-            <li key={`${nextKey('li')}-${idx}`} className="text-base md:text-lg leading-relaxed font-medium">
-              {parseInline(item, `${nextKey('li-inline')}-${idx}`)}
+    // 检查是否为列表项（考虑缩进）
+    const listMatch = trimmed.match(/^(\s*)([-*]|\d+\.)\s+(.+)$/);
+    if (listMatch) {
+      const parseList = (startIdx: number, baseIndent: number, depth: number = 0) => {
+        const items: React.ReactNode[] = [];
+        let j = startIdx;
+        
+        while (j < lines.length) {
+          const line = lines[j];
+          const t = line.trim();
+          if (!t) {
+            j += 1;
+            continue;
+          }
+          
+          const match = line.match(/^(\s*)([-*]|\d+\.)\s+(.+)$/);
+          if (!match) break;
+          
+          const indent = match[1].length;
+          const marker = match[2];
+          const content = match[3];
+          
+          // 如果缩进小于基础缩进，说明当前列表结束
+          if (indent < baseIndent) break;
+          
+          // 如果缩进大于基础缩进，说明是嵌套列表
+          if (indent > baseIndent) {
+            // 递归解析嵌套列表
+            const nestedList = parseList(j, indent, depth + 1);
+            items.push(
+              <li key={`${nextKey('li')}-${j}`} className="text-base md:text-lg leading-relaxed font-medium">
+                {nestedList.items}
+              </li>
+            );
+            j = nestedList.nextIdx;
+            continue;
+          }
+          
+          // 处理当前列表项
+          items.push(
+            <li key={`${nextKey('li')}-${j}`} className="text-base md:text-lg leading-relaxed font-medium py-1">
+              {parseInline(content, `${nextKey('li-inline')}-${j}`)}
             </li>
-          ))}
-        </ListTag>
-      );
+          );
+          
+          j += 1;
+        }
+        
+        // 根据深度生成不同的列表样式
+        const isOrdered = /^\d+\.$/.test(listMatch[2]);
+        let listClass = '';
+        
+        if (isOrdered) {
+          listClass = 'list-decimal';
+        } else {
+          // 为不同深度的无序列表使用不同的标记
+          const markers = ['list-disc', 'list-circle', 'list-square'];
+          listClass = markers[depth % markers.length];
+        }
+        
+        const ListTag = (isOrdered ? 'ol' : 'ul') as 'ol' | 'ul';
+        const listElement = (
+          <ListTag
+            key={nextKey('list')}
+            className={`${listClass} pl-6 space-y-2 text-gray-700 dark:text-gray-200`}
+            style={{ marginBottom: '0.5rem' }}
+          >
+            {items}
+          </ListTag>
+        );
+        
+        return { items: listElement, nextIdx: j };
+      };
+      
+      const baseIndent = listMatch[1].length;
+      const { items, nextIdx } = parseList(i, baseIndent);
+      
+      blocks.push(items);
+      
+      i = nextIdx;
       continue;
     }
 
