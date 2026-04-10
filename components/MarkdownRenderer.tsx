@@ -260,6 +260,48 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
       continue;
     }
 
+    // Check for table
+    if (trimmed.startsWith('|')) {
+      const tableLines: string[] = [trimmed];
+      i += 1;
+      while (i < lines.length && lines[i].trim().startsWith('|')) {
+        tableLines.push(lines[i]);
+        i += 1;
+      }
+      
+      if (tableLines.length >= 2) {
+        const headerRow = tableLines[0].split('|').map(cell => cell.trim()).filter(Boolean);
+        const separatorRow = tableLines[1].split('|').map(cell => cell.trim()).filter(Boolean);
+        const dataRows = tableLines.slice(2).map(row => row.split('|').map(cell => cell.trim()).filter(Boolean));
+        
+        blocks.push(
+          <table key={nextKey('table')} className="w-full border-collapse">
+            <thead>
+              <tr>
+                {headerRow.map((header, idx) => (
+                  <th key={`${nextKey('th')}-${idx}`} className="border border-gray-200 dark:border-gray-800 px-4 py-2 text-left bg-gray-50 dark:bg-gray-900 font-bold">
+                    {parseInline(header, `${nextKey('th-inline')}-${idx}`)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dataRows.map((row, rowIdx) => (
+                <tr key={`${nextKey('tr')}-${rowIdx}`} className={rowIdx % 2 === 0 ? 'bg-white dark:bg-gray-950' : 'bg-gray-50 dark:bg-gray-900'}>
+                  {row.map((cell, cellIdx) => (
+                    <td key={`${nextKey('td')}-${rowIdx}-${cellIdx}`} className="border border-gray-200 dark:border-gray-800 px-4 py-2">
+                      {parseInline(cell, `${nextKey('td-inline')}-${rowIdx}-${cellIdx}`)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+        continue;
+      }
+    }
+    
     const paraLines: string[] = [trimmed];
     i += 1;
     while (i < lines.length) {
@@ -272,6 +314,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
       if (/^!\[([^\]]*)\]\(([^)]+)\)$/.test(t)) break;
       if (/^[-*]\s+/.test(t)) break;
       if (/^\d+\.\s+/.test(t)) break;
+      if (t.startsWith('|')) break;
       paraLines.push(t);
       i += 1;
     }
