@@ -27,7 +27,3 @@
 ::view-transition-old(page) { animation: vtFadeOut 0.25s ease-in both; }
 ::view-transition-new(page) { animation: vtFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(page),
-  ::view-transition-new(page) { animation: none !important; }
-}
