@@ -31,6 +31,7 @@ export interface Project {
   githubUrl?: string; // GitHub repository URL
   icon?: string; // Icon name for Dev projects
   content?: string;
+  fullscreen?: boolean;
 }
 
 export interface ProjectCommonFields {
@@ -44,6 +45,7 @@ export interface ProjectCommonFields {
   websiteUrl?: string;
   githubUrl?: string;
   icon?: string;
+  fullscreen?: boolean;
 }
 
 export interface ProjectLocalizedFields {

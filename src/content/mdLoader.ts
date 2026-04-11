@@ -20,11 +20,15 @@ function parseFrontmatter(raw: string): FrontmatterResult {
   let currentListKey: string | null = null;
 
   const lines = header.split('\n');
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
     if (!trimmed) continue;
     if (trimmed.startsWith('#')) continue;
 
+    // Check if this line starts with whitespace (indicating a list item or nested content)
+    const isIndented = line.startsWith(' ') || line.startsWith('\t');
+    
     if (trimmed.endsWith(':') && !trimmed.startsWith('- ')) {
       const key = trimmed.slice(0, -1);
       if (key === 'common' || key === 'zh') {
@@ -33,15 +37,57 @@ function parseFrontmatter(raw: string): FrontmatterResult {
         currentListKey = null;
         continue;
       }
-      currentSection = null;
-      data[key] = data[key] ?? {};
-      currentListKey = null;
+      // Check if next lines are indented (list items or single value)
+      const nextLine = lines[i + 1];
+      if (nextLine && (nextLine.startsWith('  ') || nextLine.startsWith('\t'))) {
+        const nextLineTrimmed = nextLine.trim();
+        // Check if next line starts with - (YAML list item)
+        if (nextLineTrimmed.startsWith('- ')) {
+          // This is a list key
+          if (currentSection) {
+            data[currentSection][key] = data[currentSection][key] || [];
+          } else {
+            data[key] = data[key] || [];
+          }
+          currentListKey = key;
+        } else {
+          // This is a single indented value
+          if (currentSection) {
+            data[currentSection][key] = nextLineTrimmed;
+          } else {
+            data[key] = nextLineTrimmed;
+          }
+          currentListKey = null;
+          i++; // Skip the value line
+        }
+      } else {
+        currentSection = null;
+        data[key] = data[key] ?? {};
+        currentListKey = null;
+      }
+      continue;
+    }
+
+    // Handle list items (both with and without - prefix)
+    if (isIndented && currentListKey) {
+      const itemValue = trimmed.replace(/^-\s*/, ''); // Remove leading - if present
+      if (itemValue) {
+        if (currentSection) {
+          data[currentSection][currentListKey].push(itemValue);
+        } else {
+          data[currentListKey].push(itemValue);
+        }
+      }
       continue;
     }
 
     if (trimmed.startsWith('- ')) {
       if (currentListKey) {
-        (currentSection ? data[currentSection] : data)[currentListKey].push(trimmed.slice(2));
+        if (currentSection) {
+          data[currentSection][currentListKey].push(trimmed.slice(2));
+        } else {
+          data[currentListKey].push(trimmed.slice(2));
+        }
         continue;
       }
     }
@@ -53,19 +99,29 @@ function parseFrontmatter(raw: string): FrontmatterResult {
       if (value.startsWith('"') && value.endsWith('"')) {
         value = value.slice(1, -1);
       }
-      if ((currentSection ? data[currentSection] : data)[key] === undefined) {
-        (currentSection ? data[currentSection] : data)[key] = value;
-      }
-      // Initialize list
-      currentListKey = null;
-      if (value === '' && lines.includes(`  - ${key}`)) {
-        (currentSection ? data[currentSection] : data)[key] = [];
-        currentListKey = key;
-      }
-      // If explicitly starting a list, set array
-      if (value === '') {
-        (currentSection ? data[currentSection] : data)[key] = [];
-        currentListKey = key;
+      if (currentSection) {
+        if (data[currentSection][key] === undefined) {
+          data[currentSection][key] = value;
+        }
+        // If value is empty, check if next lines are list items
+        if (value === '') {
+          const nextLine = lines[i + 1];
+          if (nextLine && (nextLine.startsWith('  ') || nextLine.startsWith('\t'))) {
+            data[currentSection][key] = [];
+            currentListKey = key;
+          }
+        }
+      } else {
+        if (data[key] === undefined) {
+          data[key] = value;
+        }
+        if (value === '') {
+          const nextLine = lines[i + 1];
+          if (nextLine && (nextLine.startsWith('  ') || nextLine.startsWith('\t'))) {
+            data[key] = [];
+            currentListKey = key;
+          }
+        }
       }
     }
   }
@@ -108,14 +164,15 @@ export function loadProjectsFromMarkdown(): Project[] {
       figmaUrl: common.figmaUrl || undefined, // Figma 链接，详情媒体区 iframe embed
       gallery: common.gallery || undefined, // 图集（用于摄影/设计等多图展示；摄影也可能回退到 PHOTOGRAPHY_GALLERY）
       externalLink: common.externalLink || undefined, // 备用外链（当前组件未用，可扩展）
-      tags: zh.tags || [], // 标签数组（详情页 Tags 区域）
+      tags: Array.isArray(zh.tags) ? zh.tags : (zh.tags ? [zh.tags] : []), // 标签数组（详情页 Tags 区域）
       concept: zh.concept || undefined, // “设计意图 / 创意陈述”段落
       roleDetail: zh.roleDetail || undefined, // 角色的补充说明（职责细节）
       awards: zh.awards || undefined, // 获奖信息数组（详情页“获奖情况”列表）
       websiteUrl: common.websiteUrl || undefined, // Demo/在线预览链接（详情页 Links 区域）
       githubUrl: common.githubUrl || undefined, // GitHub 仓库链接（详情页 Links 区域）
       icon: common.icon || undefined, // Dev 项目图标名（用于卡片图标展示）
-      content: body || undefined // Markdown 正文（frontmatter 之后的内容，用于站内正文渲染）
+      content: body || undefined, // Markdown 正文（frontmatter 之后的内容，用于站内正文渲染）
+      fullscreen: common.fullscreen || false
     };
     results.push(project);
   }

@@ -1,4 +1,105 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+interface NavItem {
+  id: string;
+  title: string;
+  level: number;
+  children?: NavItem[];
+  parentId?: string;
+}
+
+const Navbar: React.FC<{
+  navItems: NavItem[];
+  activeId: string;
+  onNavClick: (id: string) => void;
+  isMobile: boolean;
+  onCloseMobile: () => void;
+}> = ({ navItems, activeId, onNavClick, isMobile, onCloseMobile }) => {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (id: string) => {
+    setExpanded(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const isActive = (id: string) => {
+    return activeId === id;
+  };
+
+  const isExpanded = (id: string) => {
+    return expanded.has(id);
+  };
+
+  const hasChildren = (item: NavItem) => {
+    return item.children && item.children.length > 0;
+  };
+
+  const renderNavItem = (item: NavItem, depth: number = 0) => {
+    const paddingLeft = depth * 16;
+    const isActiveItem = isActive(item.id);
+    const itemExpanded = isExpanded(item.id);
+    const itemHasChildren = hasChildren(item);
+
+    return (
+      <div key={item.id} className="relative">
+        <button
+          className={`flex items-center w-full text-left py-2 px-4 rounded-lg transition-colors duration-200 ${isActiveItem ? 'bg-black text-white dark:bg-white dark:text-black font-bold' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          style={{ paddingLeft: `${paddingLeft + 8}px` }}
+          onClick={() => {
+            // 总是调用 onNavClick 函数，实现跳转功能
+            onNavClick(item.id);
+            // 如果有子项，则切换展开/折叠状态
+            if (itemHasChildren) {
+              toggleExpand(item.id);
+            }
+            // 如果是移动端，则关闭导航抽屉
+            if (isMobile) {
+              onCloseMobile();
+            }
+          }}
+        >
+          <span className="flex-1 truncate">{item.title}</span>
+          {itemHasChildren && (
+            <span className={`ml-2 transition-transform duration-200 ${itemExpanded ? 'transform rotate-90' : ''}`}>
+              ▶
+            </span>
+          )}
+        </button>
+        {itemHasChildren && itemExpanded && (
+          <div className="ml-4 mt-1">
+            {item.children?.map(child => renderNavItem(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className={`${isMobile ? 'fixed inset-0 z-50 bg-white dark:bg-black' : 'sticky top-4'}`}>
+      {isMobile && (
+        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-xl font-bold">目录</h2>
+          <button
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            onClick={onCloseMobile}
+          >
+            ×
+          </button>
+        </div>
+      )}
+      <div className={`overflow-y-auto ${isMobile ? 'h-[calc(100vh-64px)] p-4' : 'max-h-[calc(100vh-8rem)]'}`}>
+        {navItems.map(item => renderNavItem(item))}
+      </div>
+    </div>
+  );
+};
 
 type InlineNode = string | React.ReactElement;
 
@@ -47,7 +148,7 @@ function parseInline(text: string, keyPrefix: string): InlineNode[] {
                 src={imgMatch[2]}
                 alt={imgMatch[1]}
                 referrerPolicy="no-referrer"
-                className="w-full rounded-2xl border border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 transition-opacity"
+                className="max-w-full rounded-2xl border border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 transition-opacity"
                 loading="lazy"
                 decoding="async"
               />
@@ -95,12 +196,13 @@ function parseInline(text: string, keyPrefix: string): InlineNode[] {
         );
       } else {
         // 处理普通链接
+        const isInternalAnchor = href.startsWith('#');
         nodes.push(
           <a
             key={`${keyPrefix}-link-${keyIndex++}`}
             href={href}
-            target="_blank"
-            rel="noreferrer"
+            target={isInternalAnchor ? '_self' : '_blank'}
+            rel={isInternalAnchor ? undefined : 'noreferrer'}
             className="font-bold underline decoration-2 underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             {parseInline(label, `${keyPrefix}-link-content-${keyIndex++}`)}
@@ -172,18 +274,28 @@ function headingLevel(line: string): number | null {
   return m[1].length;
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9\u4e00-\u9fa5\-]/g, '')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 function renderHeading(level: number, content: string, key: string) {
   const base = 'font-black text-black dark:text-white leading-tight';
   const cls =
-    level === 1 ? `text-3xl md:text-4xl ${base}` :
-    level === 2 ? `text-2xl md:text-3xl ${base}` :
-    level === 3 ? `text-xl md:text-2xl ${base}` :
-    level === 4 ? `text-lg md:text-xl ${base}` :
-    level === 5 ? `text-base md:text-lg ${base}` :
-    `text-sm md:text-base ${base}`;
+    level === 1 ? `text-4xl md:text-5xl ${base}` :
+    level === 2 ? `text-3xl md:text-4xl ${base}` :
+    level === 3 ? `text-2xl md:text-3xl ${base}` :
+    level === 4 ? `text-xl md:text-2xl ${base}` :
+    level === 5 ? `text-lg md:text-xl ${base}` :
+    `text-base md:text-lg ${base}`;
 
   const Tag = (`h${level}` as keyof JSX.IntrinsicElements);
-  return <Tag key={key} className={cls}>{parseInline(content, key)}</Tag>;
+  const id = slugify(content);
+  return <Tag key={key} className={cls} id={id}>{parseInline(content, key)}</Tag>;
 }
 
 export interface MarkdownRendererProps {
@@ -191,6 +303,118 @@ export interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+  const [activeId, setActiveId] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [showMobileNav, setShowMobileNav] = useState<boolean>(false);
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const headingRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  // 提取文档中的标题，构建导航项树
+  useEffect(() => {
+    const lines = content.replace(/\r\n/g, '\n').split('\n');
+    const items: NavItem[] = [];
+    const stack: NavItem[] = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      const level = headingLevel(trimmed);
+      if (level) {
+        const text = trimmed.replace(/^#{1,6}\s+/, '');
+        const id = slugify(text);
+        const newItem: NavItem = { id, title: text, level };
+
+        // 找到父节点
+        while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        if (stack.length > 0) {
+          const parent = stack[stack.length - 1];
+          newItem.parentId = parent.id;
+          if (!parent.children) {
+            parent.children = [];
+          }
+          parent.children.push(newItem);
+        } else {
+          items.push(newItem);
+        }
+
+        stack.push(newItem);
+      }
+    }
+
+    setNavItems(items);
+  }, [content]);
+
+  // 处理滚动事件，自动定位到当前阅读章节
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 100;
+      const headings = Object.entries(headingRefs.current);
+      let currentId = '';
+
+      for (const [id, element] of headings) {
+        if (element && element.offsetTop <= scrollPosition) {
+          currentId = id;
+        }
+      }
+
+      if (currentId !== activeId) {
+        setActiveId(currentId);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // 初始调用
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [activeId]);
+
+  // 处理窗口大小变化，更新 isMobile 状态
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize(); // 初始调用
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // 处理导航点击
+  const handleNavClick = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      // 滚动后稍微调整位置，留出顶部空间
+      setTimeout(() => {
+        window.scrollBy(0, -80);
+      }, 100);
+      setActiveId(id);
+    }
+  };
+
+  // 渲染标题，同时添加 ref
+  const renderHeadingWithRef = (level: number, content: string, key: string) => {
+    const id = slugify(content);
+    const heading = renderHeading(level, content, key);
+    
+    // 为标题添加 ref
+    return React.cloneElement(heading as React.ReactElement, {
+      ref: (el: HTMLElement | null) => {
+        headingRefs.current[id] = el;
+      }
+    });
+  };
+
   const lines = content.replace(/\r\n/g, '\n').split('\n');
   const blocks: React.ReactNode[] = [];
 
@@ -239,7 +463,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
     const level = headingLevel(trimmed);
     if (level) {
       const text = trimmed.replace(/^#{1,6}\s+/, '');
-      blocks.push(renderHeading(level, text, nextKey('h')));
+      blocks.push(renderHeadingWithRef(level, text, nextKey('h')));
       i += 1;
       continue;
     }
@@ -252,7 +476,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
             src={img[2]}
             alt={img[1]}
             referrerPolicy="no-referrer"
-            className="w-full rounded-2xl border border-gray-200 dark:border-gray-800"
+            className="max-w-full rounded-2xl border border-gray-200 dark:border-gray-800"
             loading="lazy"
             decoding="async"
           />
@@ -438,8 +662,49 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
   }
 
   return (
-    <div className="w-full flex flex-col gap-5">
-      {blocks}
+    <div className="w-full flex flex-col md:flex-row gap-8">
+      {/* 侧边导航栏（桌面端） */}
+      {!isMobile && (
+        <div className="md:w-64 lg:w-72 shrink-0">
+          <Navbar
+            navItems={navItems}
+            activeId={activeId}
+            onNavClick={handleNavClick}
+            isMobile={false}
+            onCloseMobile={() => {}}
+          />
+        </div>
+      )}
+
+      {/* 移动端导航按钮 */}
+      {isMobile && (
+        <div className="fixed top-4 right-4 z-40">
+          <button
+            className="p-2 rounded-full bg-black text-white dark:bg-white dark:text-black shadow-lg"
+            onClick={() => setShowMobileNav(true)}
+          >
+            ☰
+          </button>
+        </div>
+      )}
+
+      {/* 移动端导航抽屉 */}
+      {isMobile && showMobileNav && (
+        <Navbar
+          navItems={navItems}
+          activeId={activeId}
+          onNavClick={handleNavClick}
+          isMobile={true}
+          onCloseMobile={() => setShowMobileNav(false)}
+        />
+      )}
+
+      {/* 主要内容 */}
+      <div className="flex-1">
+        <div className="w-full flex flex-col gap-5">
+          {blocks}
+        </div>
+      </div>
     </div>
   );
 };

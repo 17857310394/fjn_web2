@@ -345,9 +345,10 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
 
            {/* Modal Content - Removed backdrop-blur-2xl to fix lag */}
            <div className={`
-             relative w-full max-w-5xl max-h-[90vh] overflow-y-auto no-scrollbar
+             relative w-full overflow-y-auto no-scrollbar
              bg-white dark:bg-gray-900 
-             rounded-[2rem] shadow-2xl border border-white/20 dark:border-white/10
+             ${displayProject?.fullscreen ? 'max-w-none max-h-[100vh] rounded-none' : 'max-w-5xl max-h-[90vh] rounded-[2rem]'} 
+             shadow-2xl border border-white/20 dark:border-white/10
              flex flex-col
              ${selectedProject ? 'animate-message-pop' : 'animate-message-pop-out'}
            `}>
