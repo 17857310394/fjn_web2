@@ -3,7 +3,7 @@ id: war3_editor
 common:
   category: Game
   image: /files/main-2.png
-  fullscreen: true
+  fullscreen: false
 #   websiteUrl: https://lun3cy.github.io/LUNA-Badge/
   githubUrl: https://github.com/17857310394/my-topdown-game
   videoUrl: /videos/game01.mp4
