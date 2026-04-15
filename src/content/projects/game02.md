@@ -1,5 +1,5 @@
 ---
-id: war3_editor
+id: game02
 common:
   category: Game
   image: /files/main-3.png

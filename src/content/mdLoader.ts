@@ -130,11 +130,27 @@ function parseFrontmatter(raw: string): FrontmatterResult {
 }
 
 function mapCategory(value: string): Category {
-  switch (value) {
-    case Category.ALL: return Category.ALL;
-    case Category.GAME: return Category.GAME;
-    case Category.ARTICLE: return Category.ARTICLE;
-    case Category.DEV: return Category.DEV;
+  const normalizedValue = value.trim().toLowerCase();
+  switch (normalizedValue) {
+    case Category.ALL.toLowerCase():
+    case 'all':
+      return Category.ALL;
+    case Category.GAME.toLowerCase():
+    case 'game':
+    case '游戏':
+    case '游戏开发':
+      return Category.GAME;
+    case Category.ARTICLE.toLowerCase():
+    case 'article':
+    case '文章':
+    case '策划案':
+      return Category.ARTICLE;
+    case Category.DEV.toLowerCase():
+    case 'development':
+    case 'dev':
+    case '应用':
+    case '应用开发':
+      return Category.DEV;
     default:
       return Category.ALL;
   }
